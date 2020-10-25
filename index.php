@@ -119,7 +119,12 @@ Flight::route('/post/@postid', function($postid){
 
 // threads ##################################################
 Flight::route('/threads/@postid', function($postid){
-    $rows = ORM::for_table('thread')->where('postid',$postid)->order_by_desc('updated')->find_many();
+    $count = ORM::for_table('thread')->where('postid',$postid)->where_like('title',"%" . "0000" . "%")->count();//find_many();
+    if($count == 0){
+      $rows = ORM::for_table('thread')->where('postid',$postid)->order_by_desc('updated')->find_many();
+    }else{
+      $rows = ORM::for_table('thread')->where('postid',$postid)->order_by_desc('title')->find_many();
+    }
     json_echo(make_list_many($rows));
 });
 
